@@ -120,6 +120,7 @@ def displayAdminRecords():
 # displayAdminRecords()
 
 
+################################## Basic Product Search Function ###########################################################
 def basicProductSearchByCategory(category):
     try:
         query = f"SELECT Category, Model, Price, Warranty, Inventory FROM products WHERE Category = '{category}'"
@@ -143,6 +144,7 @@ def basicProductSearchByModel(model):
 
 
 def basicProductFilterByPrice(price):
+
     try:
         query = f"SELECT Category, Model, Price, Warranty, Inventory FROM products WHERE Price <= {price}"
         mycursor.execute(query)
@@ -152,25 +154,26 @@ def basicProductFilterByPrice(price):
         mysqldb.rollback()
         mysqldb.close()
 
-# Dunno why repeat
-def basicItemFilterByColor(color):
+
+def basicProductFilterByColor(color):
+
     try:
-        query = f"SELECT i.Category, i.Model, p.Price, p.Warranty, i.Color FROM products p, items i " \
-                f"WHERE i.Color = '{color}'"
+        query = f"SELECT Category, Model, Price, Warranty, (SELECT COUNT(s.ItemID) FROM items s WHERE " \
+                f"s.Category = p.Category AND s.Model = p.Model AND s.PurchaseStatus = 'Unsold' " \
+                f"AND s.Color = '{color}') FROM products p"
         mycursor.execute(query)
         result = mycursor.fetchall()
-        print(tabulate(result, headers=["Item Category", "Model", "Price", "Warranty", "Inventory"]))
+        print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
     except:
         mysqldb.rollback()
         mysqldb.close()
 
-
 def basicProductFilterByFactory(factory):
 
     try:
-        query = f"SELECT p.Category, p.Model, p.Price, p.Warranty, (SELECT COUNT(s.ItemID) FROM" \
-                f"items s WHERE s.Category = p.Category AND s.Model = p.Model AND s.PurchaseStatus = 'Unsold' AND " \
-                f"s.Factory = '{factory}') FROM products p"
+        query = f"SELECT Category, Model, Price, Warranty, (SELECT COUNT(s.ItemID) FROM items s WHERE " \
+                f"s.Category = p.Category AND s.Model = p.Model AND s.PurchaseStatus = 'Unsold' " \
+                f"AND s.Factory = '{factory}') FROM products p"
         mycursor.execute(query)
         result = mycursor.fetchall()
         print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
@@ -179,11 +182,22 @@ def basicProductFilterByFactory(factory):
         mysqldb.close()
 
 
+def basicProductFilterByProductionYear(productionYear):
+    try:
+        query = f"SELECT Category, Model, Price, Warranty, (SELECT COUNT(s.ItemID) FROM items s WHERE " \
+                f"s.Category = p.Category AND s.Model = p.Model AND s.PurchaseStatus = 'Unsold' " \
+                f"AND s.ProductionYear = '{productionYear}') FROM products p"
+        mycursor.execute(query)
+        result = mycursor.fetchall()
+        print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
+    except:
+        mysqldb.rollback()
+        mysqldb.close()
+
+#####################################################################################################################
 basicProductFilterByFactory('Malaysia')
-# basicItemFilterByColor('White')
-# basicProductFilterByPrice(300)
-# basicProductSearchByCategory('Lights')
-# basicProductSearchByModel('Light1')
+basicProductFilterByProductionYear('2019')
+
 
 
 # Checking inventory stocks for each products
