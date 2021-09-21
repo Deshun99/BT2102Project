@@ -82,6 +82,18 @@ def displayCustomerRecords():
 
 # displayCustomerRecords()
 
+def retrieveCustomerID(username):
+    mycursor.execute(
+        f"SELECT * FROM customer WHERE CustomerID = '{username}'")
+    cursor = mycursor.fetchall()
+    return cursor[0][0]
+
+# retrieveCustomerID('test1')
+
+
+def emptyCursor(mycursor):
+    return len(mycursor.fetchall()) == 0
+
 
 def addAdmin(listOfTuples):
     strg = ""
@@ -120,25 +132,65 @@ def displayAdminRecords():
 # displayAdminRecords()
 
 
+
 ################################## Basic Product Search Function ###########################################################
 def basicProductSearchByCategory(category):
     try:
         query = f"SELECT Category, Model, Price, Warranty, Inventory FROM products WHERE Category = '{category}'"
         mycursor.execute(query)
         result = mycursor.fetchall()
-        print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
+
+        if len(list(result)) > 0:
+            print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
+            print("\n")
+            listOfProd = list(result)
+            option = input("Do you want to search the individual items (Y/N) ? ")
+            if option == 'Y':
+                print("There are a total of " + str(len(result)) + " products to select your item")
+                selection = input("Select your option: ")
+                print("Searching for products...\n")
+                listOfItemAvailable(listOfProd, int(selection) - 1)
+        else :
+            print("Invalid search\n")
     except:
         mysqldb.rollback()
         mysqldb.close()
 
+def listOfItemAvailable(keyword, index):
+    try:
+        query = f"SELECT ItemID, Category, Color, Factory, PowerSupply, Model, ProductionYear " \
+                f"FROM items s WHERE s.Category = '{keyword[index][0]}' AND s.Model = '{keyword[index][1]}' " \
+                f"AND s.PurchaseStatus = 'Unsold'"
+        mycursor.execute(query)
+        result = mycursor.fetchall()
+        print(tabulate(result, headers=["ItemID", "Category", "Color", "Factory", "PowerSupply",
+                                        "Model", "Production Year"]))
+        print("\n")
+    except:
+        print("Error occurred in search\n")
+        mysqldb.rollback()
+        mysqldb.close()
 
 def basicProductSearchByModel(model):
     try:
         query = f"SELECT Category, Model, Price, Warranty, Inventory FROM products WHERE Model = '{model}'"
         mycursor.execute(query)
         result = mycursor.fetchall()
-        print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
+
+        if len(list(result)) > 0:
+            print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
+            print("\n")
+            listOfProd = list(result)
+            option = input("Do you want to search the individual items (Y/N) ? ")
+            if option == 'Y':
+                print("There are a total of " + str(len(result)) + " products to select your item")
+                selection = input("Select your option: ")
+                print("Searching for products...\n")
+                listOfItemAvailable(listOfProd, int(selection) - 1)
+        else :
+            print("Invalid search\n")
     except:
+        print("Error occurred in search\n")
         mysqldb.rollback()
         mysqldb.close()
 
@@ -150,7 +202,9 @@ def basicProductFilterByPrice(price):
         mycursor.execute(query)
         result = mycursor.fetchall()
         print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
+        print('\n')
     except:
+        print("Error occurred in search\n")
         mysqldb.rollback()
         mysqldb.close()
 
@@ -164,7 +218,9 @@ def basicProductFilterByColor(color):
         mycursor.execute(query)
         result = mycursor.fetchall()
         print(tabulate(result, headers=["Product Category", "Model", "Price", "Warranty", "Inventory"]))
+        print("\n")
     except:
+        print("Error occurred in search\n")
         mysqldb.rollback()
         mysqldb.close()
 
@@ -195,8 +251,9 @@ def basicProductFilterByProductionYear(productionYear):
         mysqldb.close()
 
 #####################################################################################################################
-basicProductFilterByFactory('Malaysia')
-basicProductFilterByProductionYear('2019')
+# basicProductSearchByCategory('Lights')
+# basicProductFilterByFactory('Malaysia')
+# basicProductFilterByProductionYear('2019')
 
 
 
@@ -253,7 +310,6 @@ def simpleSearchProductCategory(category):
     # for x in myProducts_col.find(myquery, {"_id": 0, "Cost ($)": 0, "ProductID": 0}):
     #      print(x)
     #      print("Inventory stocks: " + str(inventoryStocks(x["Category"], x["Model"])))
-
 
 # Search based on Model
 def simpleSearchModel(model):
@@ -363,3 +419,85 @@ def printProduct():
 # specificProduct('Locks', 'Safe3')
 # specificProduct('Locks', 'SmartHome1')
 # inventoryStock('Lights', 'Light2')
+#
+def purchaseItem(username):
+    # Tables
+    booksTable = "Library.Book"
+    booksBorrowedTable = "Library.Borrow"
+    booksReservedTable = "Library.Reserve"
+    customerTable = "testing.customer"
+    # Messages
+    notRegisteredMsg = "You are not registered!"
+    alreadyReservedMsg = "You have already reserved this book!"
+    alreadyBorrowedMsg = "You have already borrowed this book!"
+    bookReservedMsg = "Book was already reserved!"
+    reservedSuccessMsg = "You have succesfully reserved the book"
+    borrowedSuccessMsg = "Book was succesfully borrowed!"
+    maxBookMsg = "Maximum number of books reached!!!!"
+    existingFinesMsg = "You got existing fines, so you cannot borrow any books!"
+
+    # Datetime values
+    # timing = datetime.datetime.now()
+    # print(timing)
+
+    # duedate = extendingDateTime(timing)
+
+    print("Hi chibao")
+    try:
+        mycursor.execute(
+            f"SELECT * FROM customer WHERE CustomerID LIKE '{username}'")
+        if emptyCursor(mycursor):
+            print(notRegisteredMsg)
+        else:
+
+            # id = retrieveCustomerID(username)
+            # if reachMaxLoan(id):
+            #     print(maxBookMsg)
+            # elif gotFines(id):
+            #     print(existingFinesMsg)
+            # else:
+
+            while True :
+                print("Basic Product Search by:")
+                print("1. Product Category")
+                print("2. Models")
+                print("3. Filter by price")
+                print("4. Filter by Color")
+                print("5. Filter by Factory")
+                print("6. Filter by Production Year")
+                print("7. Exit\n")
+
+                option = input("Your selection: ")
+                if option == '1':
+                    prodCat = input("Enter a Product Category: ")
+                    print("Searching based on Product Category...")
+                    basicProductSearchByCategory(prodCat)
+                elif option == '2':
+                    model = input("Enter a Model: ")
+                    print("Searching based on Model...")
+                    basicProductSearchByModel(model)
+                elif option == '3':
+                    filterPrice = input("Enter a price (upperbound): ")
+                    print("Searching based on Price (upperbound)...")
+                    basicProductFilterByPrice(filterPrice)
+                elif option == '4':
+                    filterColor = input("Enter a color: ")
+                    print("Searching based on Color...")
+                    basicProductFilterByColor(filterColor)
+                elif option == '5':
+                    filterFactory = input("Enter a Factory: ")
+                    print("Searching based on Factory...")
+                    basicProductFilterByFactory(filterFactory)
+                elif option == '6':
+                    filterProductYear = input("Enter a Production Year: ")
+                    print("Searching based on Production Year...")
+                    basicProductFilterByProductionYear(filterProductYear)
+                elif option == '7':
+                    break
+    except:
+        print("There is an error in your selection!")
+        mysqldb.rollback()
+        mysqldb.close()
+
+
+purchaseItem('test1')
