@@ -36,7 +36,7 @@ Make sure you have python version 3.7.5 and above
 
 **Make sure your console starts off from this before performing the commands below**
 ```
-.../GRP-05-AS1/
+.../BT2102Project/
 ```
 
 1) open the file 'oshes.py'
