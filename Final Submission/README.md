@@ -5,17 +5,16 @@
 With the advent and popularity of ecommerce, more and more consumers are purchasing smart-home equipment online. A company that focuses its business on smart home equipment has decided to incorporate a new Online Smart Home Ecommerce System. The company’s in-house IT team is expected to deliver a database software application (named “OSHES”) to manage product sales, administration, and maintenance.
 
 ## Details
-_This project is part of the module BT2102: Data Management and Visualisation assignment 1, where students are tasked to create an OSHES (Online Smart Home Ecommerce System) using only python, MySQL and MongoDB_
+_This project is part of the module BT2102: Data Management and Visualisation Assignment 1, where students are tasked to create an OSHES (Online Smart Home Ecommerce System) using only Python, MySQL and MongoDB_
 
 Lights and Locks sells state of the art Lights and Locks. Customers can search for products based on product category and model and specify product and item attributes when searching before purchasing a Light or a Lock. Customers can also send their purchased items for servicing, but will have to pay a service fee IF they request to service an item that is out of warranty. As an added feature, customers can request to service the item more than one time. Customers can also cancel their requests, but not when the item is already undergoing servicing by the Admin.
 
 Meanwhile, Admins can also search for products like customers but will get to see more information on the items like how much it cost to produce the item. Admins can also approve of requests and can choose to service those approved requests.
 
 # Setup 
-to install dependencies
+to install dependencies such as tkinter, python, pandas etc
 
-
-```pip install -r requirements.txt```
+```pip install -r 'relevant dependencies'```
 
 Ensure that MySQL is set up locally with the following credentials:
 ```
