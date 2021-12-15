@@ -11,6 +11,8 @@ Lights and Locks sells state of the art Lights and Locks. Customers can search f
 
 Meanwhile, Admins can also search for products like customers but will get to see more information on the items like how much it cost to produce the item. Admins can also approve of requests and can choose to service those approved requests.
 
+The Logical and Conceptual Data Model can be found in the BT2102 Assignment 1 Group 05.pptx file
+
 # Setup 
 to install dependencies such as tkinter, python, pandas etc
 
